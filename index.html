@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<title>Triplemint</title>
+<link rel="shortcut icon" href="https://static.triplemint.com/jupiter/288024bad6eb5c1110591c65603bbd696aa6cdad/static/images/favicon.ico" />
+<script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet"> 
+<style type="text/css">
+body{
+		margin:0;
+		padding: 0;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    -moz-osx-font-smoothing: grayscale;
+    -moz-font-feature-settings: 'liga', 'kern';
+    color: #333;
+		font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+}
+#map { 
+	position: absolute; 
+	top: 0; 
+	bottom: 0; 
+	width: 100%; 
+	height: 100vh;
+}
+#counter {
+	font-family: Arial;
+	color: #000;
+	font-size: 30px;
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	left: 45%;
+	display: inline-block;
+	padding: 20px;
+	text-shadow: 1px 1px 1px #FFF;
+}
+#menu {
+    background: #fff;
+    position: absolute;
+    z-index: 1;
+    top: 10px;
+    right: 10px;
+    border-radius: 3px;
+    width: 120px;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    font-family: 'Open Sans', sans-serif;
+}
+
+#menu a {
+    font-size: 13px;
+    color: #404040;
+    display: block;
+    margin: 0;
+    padding: 0;
+    padding: 10px;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+    text-align: center;
+}
+#menu a:last-child {
+    border: none;
+}
+#menu a:hover {
+    background-color: #f8f8f8;
+    color: #404040;
+}
+
+#menu a.active {
+    background-color: #3887be;
+    color: #ffffff;
+}
+
+#menu a.active:hover {
+    background: #3074a4;
+}
+</style>
+</head>
+<body>
+<nav id="menu"></nav>
+<div id='counter'></div>
+<div id='map'></div>
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoiaG9tZTYxIiwiYSI6IkRSZVdLTzAifQ.j0DbHOgstXjXHYfR5e3jPA';
+var map = new mapboxgl.Map({
+  container: 'map',
+  style: 'mapbox://styles/home61/ckfzp36cq1hsk19qx6b46tqd4', // stylesheet location
+  center: [-73.736, 40.666], // starting position [lng, lat]
+  zoom: 8.3 // starting zoom
+});
+
+map.on('load', function () {
+  map.addSource('olr-source', {
+    'type': 'geojson',
+    'data': "https://gist.githubusercontent.com/cquilboss/5377f9dcdab1071dfeac72d847f6fa3d/raw/4bc9b13665803803cf7d0af5728902be1c02d05b/stats-olr.geojson"
+  });
+  map.addLayer({
+    'id': 'REBNY via OLR',
+    'type': 'fill',
+    'source': 'olr-source',
+    'layout': {
+    	 'visibility': 'none'
+    },
+    'paint': {
+		  'fill-color': '#00d7a0',
+		  'fill-opacity': {
+		  	property: 'value',
+		  	stops: [[1, 0.3], [2000, 0.9]]
+		  }
+    }
+  });
+		
+  map.addSource('hudson-source', {
+    'type': 'geojson',
+    'data': "https://gist.githubusercontent.com/cquilboss/fd2f8a78976920af5e20e4580a81cfdf/raw/9f35fe01806f1f0ebb494a9b6c7a6fced8ef84b1/stats-hudson.geojson"
+  });
+  map.addLayer({
+    'id': 'Hudson MLS',
+    'type': 'fill',
+    'source': 'hudson-source',
+    'layout': {
+    	 'visibility': 'none'
+    },
+    'paint': {
+		  'fill-color': '#00d7a0',
+		  'fill-opacity': {
+		  	property: 'value',
+		  	stops: [[1, 0.3], [2000, 0.9]]
+		  }
+    }
+  });
+		
+  map.addSource('onekey-source', {
+    'type': 'geojson',
+    'data': "https://gist.githubusercontent.com/cquilboss/b8458672e252b2205ca4ce1376590e35/raw/c82ab401df6b8330915618de75fed474985f22ae/stats-onekey.geojson"
+  });
+  map.addLayer({
+    'id': 'Onekey MLS',
+    'type': 'fill',
+    'source': 'onekey-source',
+    'layout': {
+    	 'visibility': 'none'
+    },
+    'paint': {
+		  'fill-color': '#00d7a0',
+		  'fill-opacity': {
+		  	property: 'value',
+		  	stops: [[1, 0.4], [2000, 0.9]]
+		  }
+    }
+  });
+	
+  map.addSource('njmls-source', {
+    'type': 'geojson',
+    'data': "https://gist.githubusercontent.com/cquilboss/8530f7d0a0bfc3ec6927fa67b4bddb0f/raw/112144124f468867d8cc519a64739ce76b056089/stats-njmls.geojson"
+  });
+  map.addLayer({
+    'id': 'New Jersey MLS',
+    'type': 'fill',
+    'source': 'njmls-source',
+    'layout': {
+    	 'visibility': 'none'
+    },
+    'paint': {
+	  	'fill-color': '#00d7a0',
+	  	'fill-opacity': {
+	  		property: 'value',
+	  		stops: [[1, 0.6], [2000, 0.9]]
+	  	}
+    }
+  });
+
+  map.addSource('outeast-source', {
+    'type': 'geojson',
+    'data': "https://gist.githubusercontent.com/cquilboss/401610ec9f494ea6024e793872dbd04c/raw/ae5e6a955c164892716cbc86a67a1212c273dd3d/stats-outeast.geojson"
+  });
+  map.addLayer({
+    'id': 'Outeast.com',
+    'type': 'fill',
+    'source': 'outeast-source',
+    'layout': {
+    	 'visibility': 'none'
+    },
+    'paint': {
+		  'fill-color': '#00d7a0',
+		  'fill-opacity': {
+		  	property: 'value',
+		  	stops: [[1, 0.7], [2000, 0.9]]
+		  }
+    }
+  });
+  
+	
+	
+	/**/
+});
+var sum = 0;
+var toggleableLayerIds = ['REBNY via OLR','Hudson MLS','Onekey MLS','New Jersey MLS','Outeast.com'];
+var toggleableLayerVal = [45549, 7771, 42419, 4788, 5069];
+for (var i = 0; i < toggleableLayerIds.length; i++) {
+  var id = toggleableLayerIds[i];
+  var link = document.createElement('a');
+  link.href = '#';
+  link.className = '';
+  link.textContent = id;
+	link.dataVal = toggleableLayerVal[i];
+  link.onclick = function (e) {
+    var clickedLayer = this.textContent;
+    e.preventDefault();
+    e.stopPropagation();
+    var visibility = map.getLayoutProperty(clickedLayer, 'visibility');
+    if (visibility === 'visible') {
+        map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+        this.className = '';
+				sum -= parseInt(this.dataVal);
+				console.log(this);
+			  document.getElementById('counter').innerHTML = new Intl.NumberFormat('en-US').format(sum);
+    } else {
+        this.className = 'active';
+        map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
+				sum += parseInt(this.dataVal);
+				console.log(this);
+			  document.getElementById('counter').innerHTML = new Intl.NumberFormat('en-US').format(sum);
+    }
+  };
+  var layers = document.getElementById('menu');
+  layers.appendChild(link);
+}
+		
+</script>
+
+</body>
+</html>
